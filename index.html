@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donodaseves AI Hub</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+<style>
+  :root {
+    --bg-dark: #313338;
+    --bg-surface: #2B2D31;
+    --bg-input: #1E1F22;
+    --accent: #5865F2;
+    --text-main: #DBDEE1;
+    --text-muted: #949BA4;
+    --text-faint: #5C6067;
+    --danger: #ED4245;
+    --radius: 8px;
+    --dur: 160ms;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg-dark); color: var(--text-main); font-family: "Whitney", "Helvetica Neue", Helvetica, Arial, sans-serif; min-height: 100vh; padding-bottom: 60px; }
+
+  a { color: #00AFF4; text-decoration: none; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .wrap { max-width: 980px; margin: 0 auto; padding: 28px 20px 0; }
+
+  header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 22px; border-bottom: 1px solid #1f2023; margin-bottom: 28px; }
+  .brand h1 { margin: 0; font-size: 22px; color: #fff; }
+
+  .icon-btn { background: #404249; border: none; color: #B5BAC1; border-radius: 4px; padding: 8px 12px; font-size: 12px; cursor: pointer; transition: 0.2s; }
+  .icon-btn:hover { background: #4E5058; color: #fff; }
+  .icon-btn[aria-pressed="true"] { background: var(--accent); color: #fff; }
+
+  .ai-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .ai-card { background: var(--bg-surface); border-radius: var(--radius); padding: 16px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; border: 1px solid #1f2023; transition: 0.2s; }
+  .ai-card:hover { background: #36373D; }
+  .ai-card .name { font-weight: 600; color: #fff; }
+  .ai-card .desc { font-size: 12px; color: var(--text-muted); }
+  .keycap { font-size: 10px; color: var(--text-faint); margin-bottom: 4px; }
+
+  .card { background: var(--bg-surface); border-radius: var(--radius); padding: 16px; border: 1px solid #1f2023; }
+  textarea { width: 100%; min-height: 140px; background: var(--bg-input) !important; border: none !important; color: var(--text-main) !important; border-radius: 5px !important; padding: 10px; }
+  
+  .btn { background: #404249; border: none; color: #fff; padding: 8px 16px; border-radius: 3px; cursor: pointer; font-size: 13px; }
+  .btn.primary { background: var(--accent); }
+  .btn.danger-outline { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
+  
+  .secondary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+  .col-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; }
+  .panel-col { display: flex; flex-direction: column; gap: 16px; }
+
+  .cmdk-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); justify-content: center; padding-top: 100px; }
+  .cmdk-box { width: 480px; background: var(--bg-surface); border-radius: var(--radius); padding: 10px; }
+  .cmdk-input { width: 100%; background: var(--bg-input); border: none; color: #fff; padding: 12px; border-radius: 5px; }
+
+  footer { text-align: center; margin-top: 40px; color: var(--text-faint); font-size: 11px; }
+  @media (max-width: 900px) { .secondary-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="brand"><h1>Donodaseves AI Hub</h1></div>
+    <div class="header-controls">
+      <a class="icon-btn" href="PASTE_YOUR_DONATE_LINK_HERE">Donate</a>
+      <button class="icon-btn" id="shortcuts-trigger">Shortcuts</button>
+      <button class="icon-btn" id="cmdk-trigger">Search</button>
+      <button class="icon-btn" id="focus-toggle">Focus</button>
+      <button class="icon-btn" id="theme-toggle">Theme</button>
+      <button class="icon-btn" id="reset-storage">Reset</button>
+    </div>
+  </header>
+
+  <section class="deck"><div class="ai-grid" id="ai-grid"></div></section>
+
+  <div class="card draft-card">
+    <h2>Draft</h2>
+    <textarea id="draft" placeholder="Write or paste a prompt here..."></textarea>
+    <div class="draft-controls">
+      <div class="row" id="prompt-lib">
+        <select class="prompt-dropdown" id="dd-start"></select>
+        <select class="prompt-dropdown" id="dd-end"></select>
+        <select class="prompt-dropdown" id="dd-mood"></select>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="copy-draft">Copy</button>
+        <button class="btn" id="save-draft">Save</button>
+        <button class="btn danger-outline" id="clear-draft">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="secondary-grid">
+    <div class="panel-col">
+      <div class="col-label">Time</div>
+      <div class="card timer-card">
+        <div class="pomodoro-time" id="pomo-time">25:00</div>
+        <button class="btn primary" id="pomo-start">Start</button>
+        <button class="btn danger-outline" id="pomo-reset">Reset</button>
+      </div>
+    </div>
+    <div class="panel-col">
+      <div class="col-label">Scratch</div>
+      <div class="card">
+        <textarea id="notes" placeholder="Quick notes..."></textarea>
+      </div>
+    </div>
+    <div class="panel-col">
+      <div class="col-label">Lookup</div>
+      <div class="card">
+        <input type="text" id="wiki-input" placeholder="Search Wikipedia...">
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // A lógica permanece idêntica à original
+  var AIS = [
+    { name: "ChatGPT", url: "https://chat.openai.com/" },
+    { name: "Claude", url: "https://claude.ai/" },
+    { name: "Gemini", url: "https://gemini.google.com/" },
+    { name: "Mistral", url: "https://chat.mistral.ai/" },
+    { name: "Perplexity", url: "https://www.perplexity.ai/" },
+    { name: "Grok", url: "https://grok.com/" },
+    { name: "DeepSeek", url: "https://chat.deepseek.com/" },
+    { name: "DuckDuckGo", url: "https://duckduckgo.com/aichat" }
+  ];
+
+  const grid = document.getElementById("ai-grid");
+  AIS.forEach((ai, i) => {
+    const card = document.createElement("div");
+    card.className = "ai-card";
+    card.innerHTML = `<div class="keycap">Alt+${i+1}</div><div class="name">${ai.name}</div>`;
+    card.onclick = () => window.open(ai.url, "_blank");
+    grid.appendChild(card);
+  });
+</script>
+</body>
+</html>
