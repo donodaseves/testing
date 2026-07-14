@@ -1,877 +1,146 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Donodaseves AI Hub</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
-  <style>
-    /* ----- reset & base (Discord/DeepSeek inspired) ----- */
-    :root {
-      --mono: ui-monospace, "SF Mono", "Cascadia Code", "Fira Code", "JetBrains Mono", Consolas, monospace;
-      --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      --radius: 12px;
-      --dur: 160ms;
-      --bg: #0b0e11;
-      --surface: #1a1e24;
-      --surface-alt: #252b33;
-      --border: #2f363f;
-      --border-soft: #23282f;
-      --text: #e3e7ed;
-      --text-muted: #8e96a3;
-      --text-faint: #5c6572;
-      --focus: #5b8def;
-      --danger: #e5533d;
-      --shadow: 0 8px 28px rgba(0,0,0,0.6);
-      --accent-gradient: linear-gradient(135deg, #5b8def, #8a6de9);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dase AI Lab</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+<style>
+  :root {
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "Fira Code", "JetBrains Mono", Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --radius: 5px;
+    --dur: 160ms;
+  }
 
-    html[data-theme="light"] {
-      --bg: #f1f2f5;
-      --surface: #ffffff;
-      --surface-alt: #f2f4f8;
-      --border: #d4d7dd;
-      --border-soft: #e3e6ec;
-      --text: #1b1f26;
-      --text-muted: #5a6372;
-      --text-faint: #929bac;
-      --focus: #3b6fd9;
-      --danger: #c13f2b;
-      --shadow: 0 8px 28px rgba(0,0,0,0.08);
-      --accent-gradient: linear-gradient(135deg, #3b6fd9, #7a5ddf);
-    }
+  html[data-theme="dark"] {
+    --bg: #1A1B1D;
+    --surface: #212226;
+    --surface-alt: #26272C;
+    --border: #34363B;
+    --border-soft: #2B2C31;
+    --text: #E8E9EB;
+    --text-muted: #9A9CA3;
+    --text-faint: #6B6D74;
+    --focus: #6C6E74;
+    --primary: #4C7EF0;
+    --danger: #C94A3B;
+    --shadow: 0 8px 24px rgba(0,0,0,0.45);
+  }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      transition: background var(--dur) ease, color var(--dur) ease;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      padding-bottom: 20px;
-    }
-    a { color: inherit; text-decoration: none; }
-    :focus-visible {
-      outline: 2px solid var(--focus);
-      outline-offset: 2px;
-    }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
 
-    /* ----- scrollbar (discord style) ----- */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: var(--surface-alt); border-radius: 8px; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
 
-    /* ----- layout container ----- */
-    .wrap {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 20px 24px 0;
-      width: 100%;
-      flex: 1;
-    }
+  a { color: inherit; text-decoration: none; }
 
-    /* ----- header (discord-like) ----- */
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 12px 16px 16px 16px;
-      background: var(--surface);
-      border-radius: var(--radius);
-      border: 1px solid var(--border-soft);
-      margin-bottom: 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 28px 20px 0; }
 
-    .brand h1 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      background: var(--accent-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+  /* Header */
+  header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 22px; border-bottom: 1px solid var(--border-soft); margin-bottom: 28px; }
+  .brand h1 { margin: 0; font-family: var(--serif); font-size: 23px; font-weight: 700; letter-spacing: -0.01em; }
+  .header-controls { display: flex; align-items: center; gap: 8px; }
+  .icon-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; padding: 8px 12px; font-family: var(--mono); font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
-    .header-controls {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
+  /* AI Grid */
+  section.deck { margin-bottom: 32px; }
+  .ai-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .ai-card { position: relative; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--focus); border-radius: var(--radius); padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 4px; }
+  .ai-card .name { font-size: 15px; font-weight: 600; }
+  .ai-card .desc { font-size: 12px; color: var(--text-muted); }
+  .ai-card .keycap { position: absolute; top: 10px; right: 10px; font-family: var(--mono); font-size: 10px; color: var(--text-faint); border: 1px solid var(--border); border-radius: 4px; padding: 2px 5px; background: var(--surface-alt); }
 
-    .icon-btn {
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all var(--dur);
-    }
-    .icon-btn:hover { border-color: var(--focus); color: var(--text); background: var(--border); }
-    .icon-btn[aria-pressed="true"] { background: var(--focus); color: #fff; border-color: var(--focus); }
-
-    /* ----- cards & containers (deepseek/discord) ----- */
-    .card, .ai-card, .panel-col .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      transition: border-color var(--dur), box-shadow var(--dur);
-    }
-    .card:hover, .ai-card:hover { border-color: var(--text-faint); }
-
-    .ai-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .ai-card {
-      border-left: 4px solid var(--accent, var(--focus));
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      padding: 14px 16px 12px;
-      position: relative;
-      transition: transform var(--dur) ease, box-shadow var(--dur) ease;
-    }
-    .ai-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 18px -6px var(--accent, var(--focus));
-    }
-    .ai-card .name {
-      font-size: 15px;
-      font-weight: 600;
-    }
-    .ai-card .desc {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-    .ai-card .keycap {
-      position: absolute;
-      top: 8px;
-      right: 10px;
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text-faint);
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 2px 6px;
-    }
-
-    /* ----- draft card (full width) ----- */
-    .draft-card {
-      margin-bottom: 24px;
-    }
-    .draft-card h2 {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      letter-spacing: 0.02em;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-    .draft-hint {
-      font-size: 11px;
-      font-weight: 400;
-      color: var(--text-faint);
-    }
-
-    textarea {
-      width: 100%;
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-family: var(--sans);
-      font-size: 13.5px;
-      padding: 10px 12px;
-      line-height: 1.5;
-      resize: vertical;
-    }
-    textarea#draft { min-height: 150px; }
-    textarea#notes { min-height: 100px; }
-    textarea#cleaner { min-height: 110px; }
-
-    .draft-meta {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text-faint);
-      margin-top: 6px;
-    }
-
-    .draft-controls {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-top: 10px;
-    }
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .chip, .prompt-dropdown, .btn {
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-family: var(--mono);
-      font-size: 11.5px;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all var(--dur);
-    }
-    .chip:hover, .prompt-dropdown:hover, .btn:hover {
-      border-color: var(--focus);
-      color: var(--text);
-    }
-    .prompt-dropdown {
-      min-width: 110px;
-    }
-    .btn.primary {
-      background: var(--focus);
-      color: #fff;
-      border-color: var(--focus);
-      font-weight: 600;
-    }
-    .btn.primary:hover { filter: brightness(1.1); }
-    .btn.danger-outline {
-      color: var(--danger);
-      border-color: var(--danger);
-      background: transparent;
-    }
-    .btn.danger-outline:hover { background: var(--danger); color: #fff; }
-
-    /* ----- secondary grid (3 col) ----- */
-    .secondary-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-top: 8px;
-    }
-    @media (max-width: 900px) {
-      .secondary-grid { grid-template-columns: 1fr; }
-    }
-
-    .panel-col {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .col-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-faint);
-      padding-left: 4px;
-    }
-    .card h2 {
-      font-size: 12px;
-      font-family: var(--mono);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin: 0 0 8px 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    /* ---- timer / stopwatch ---- */
-    .timer-row {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .timer-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      padding: 14px;
-    }
-    .timer-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .pomodoro-time {
-      font-family: var(--mono);
-      font-size: 34px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-    }
-    .timer-set-row {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .timer-set-row input {
-      width: 56px;
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 13px;
-      padding: 4px 6px;
-      text-align: center;
-    }
-    .pomodoro-controls {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    /* ---- search / wiki ---- */
-    .search-row {
-      display: flex;
-      gap: 8px;
-    }
-    input[type="text"]#wiki-input {
-      flex: 1;
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 13.5px;
-      padding: 8px 12px;
-    }
-    .wiki-status {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 8px;
-      min-height: 18px;
-    }
-
-    /* ---- redirect chips ---- */
-    #redirect-links .chip {
-      background: var(--surface-alt);
-      border: 1px solid var(--border);
-      font-family: var(--sans);
-      font-size: 12px;
-      padding: 4px 12px;
-    }
-
-    /* ---- command palette (overlay) ---- */
-    .cmdk-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      align-items: flex-start;
-      justify-content: center;
-      padding-top: 12vh;
-      z-index: 1000;
-      backdrop-filter: blur(6px);
-    }
-    .cmdk-overlay.open { display: flex; }
-    .cmdk-box {
-      width: 90%;
-      max-width: 500px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-    .cmdk-input {
-      width: 100%;
-      box-sizing: border-box;
-      background: var(--surface-alt);
-      border: none;
-      border-bottom: 1px solid var(--border);
-      color: var(--text);
-      font-size: 15px;
-      font-family: var(--sans);
-      padding: 14px 18px;
-    }
-    .cmdk-input:focus { outline: none; }
-    .cmdk-list { max-height: 320px; overflow-y: auto; }
-    .cmdk-item {
-      padding: 10px 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      font-size: 13.5px;
-    }
-    .cmdk-item .cmdk-tag {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text-faint);
-    }
-    .cmdk-item.active, .cmdk-item:hover { background: var(--surface-alt); }
-    .cmdk-empty {
-      padding: 14px 18px;
-      font-size: 12.5px;
-      color: var(--text-faint);
-    }
-    .cmdk-hint {
-      padding: 8px 18px;
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text-faint);
-      border-top: 1px solid var(--border-soft);
-    }
-
-    /* ---- shortcuts modal ---- */
-    .shortcuts-modal-title {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      padding: 14px 18px 4px;
-    }
-    .shortcuts-modal-body { padding: 4px 18px 12px; }
-    .shortcut-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      font-size: 12.5px;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border-soft);
-    }
-    .shortcut-row:last-child { border-bottom: none; }
-    .shortcut-key {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text-faint);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 2px 8px;
-      background: var(--surface-alt);
-    }
-
-    /* focus mode */
-    body.focus-mode .draft-card,
-    body.focus-mode .secondary-grid {
-      display: none;
-    }
-
-    /* footer */
-    footer {
-      max-width: 1280px;
-      margin: 30px auto 0;
-      padding: 0 24px;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text-faint);
-      text-align: center;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      * { transition: none !important; }
-    }
-  </style>
+  /* Secondary Grid */
+  .secondary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .col-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 16px; }
+  .panel-col { display: flex; flex-direction: column; gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .card h2 { margin: 0 0 10px; font-size: 12px; font-family: var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); display: flex; justify-content: space-between; }
+  
+  textarea { width: 100%; min-height: 140px; background: var(--surface-alt); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px 12px; }
+  .btn { background: var(--surface-alt); border: 1px solid var(--border); color: var(--text); font-size: 12.5px; padding: 7px 14px; border-radius: 6px; cursor: pointer; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .draft-meta { font-family: var(--mono); font-size: 11px; color: var(--text-faint); margin-top: 6px; }
+  
+  footer { max-width: 980px; margin: 30px auto 0; padding: 0 20px; font-family: var(--mono); font-size: 11px; color: var(--text-faint); text-align: center; }
+</style>
 </head>
 <body>
 
 <div class="wrap">
-  <!-- header -->
   <header>
-    <div class="brand"><h1>Donodaseves AI Hub</h1></div>
+    <div class="brand"><h1>Dase AI Lab</h1></div>
     <div class="header-controls">
-      <a class="icon-btn" id="donate-btn" href="PASTE_YOUR_DONATE_LINK_HERE" target="_blank" rel="noopener" title="Support">♥ Donate</a>
-      <button class="icon-btn" id="shortcuts-trigger" title="Keyboard shortcuts">? Shortcuts</button>
-      <button class="icon-btn" id="cmdk-trigger" title="Command palette (Ctrl+K)">⌘K Search</button>
-      <button class="icon-btn" id="focus-toggle" aria-pressed="false" title="Toggle Focus Mode">◧ Focus</button>
-      <button class="icon-btn" id="theme-toggle" title="Toggle theme">☾ Theme</button>
-      <button class="icon-btn" id="reset-storage" title="Clear all saved data">⟲ Reset</button>
+      <button class="icon-btn">♥ Donate</button>
+      <button class="icon-btn">⌘K Search</button>
+      <button class="icon-btn">⋯ More</button>
     </div>
   </header>
 
-  <!-- AI grid -->
   <section class="deck">
-    <div class="ai-grid" id="ai-grid"></div>
+    <div class="ai-grid">
+      <div class="ai-card">
+        <span class="keycap">Alt+1</span>
+        <span class="name">ChatGPT</span>
+        <span class="desc">General purpose</span>
+      </div>
+    </div>
   </section>
 
-  <!-- Draft (full width) -->
-  <div class="card draft-card">
-    <h2>Draft <span class="draft-hint">press / to jump here</span></h2>
-    <textarea id="draft" placeholder="Write or paste a prompt here..."></textarea>
-    <div class="draft-meta" id="draft-meta">0 words · 0 characters</div>
-    <div class="draft-controls">
-      <div class="row" id="prompt-lib">
-        <select class="prompt-dropdown" id="dd-start"></select>
-        <select class="prompt-dropdown" id="dd-end"></select>
-        <select class="prompt-dropdown" id="dd-mood"></select>
-      </div>
-      <div class="row">
-        <button class="btn primary" id="copy-draft">Copy</button>
-        <button class="btn" id="save-draft">Save .txt</button>
-        <button class="btn danger-outline" id="clear-draft">Clear</button>
-      </div>
+  <div class="card">
+    <h2>Draft</h2>
+    <textarea placeholder="Write or paste a prompt here..."></textarea>
+    <div class="draft-meta">0 words · 0 characters</div>
+    <div class="row">
+      <button class="btn">Copy</button>
+      <button class="btn">Save .txt</button>
+      <button class="btn">Clear</button>
     </div>
   </div>
 
-  <!-- secondary grid -->
   <section class="secondary-grid">
-    <!-- time panel -->
     <div class="panel-col">
       <div class="col-label">Time</div>
-      <div class="timer-row" id="timer-row">
-        <div class="card timer-card">
-          <div class="timer-label">Timer</div>
-          <div class="pomodoro-time" id="pomo-time">25:00</div>
-          <div class="timer-set-row">
-            <input type="number" id="pomo-minutes" min="1" max="180" value="25">
-            <button class="btn" id="pomo-set" type="button">Set</button>
-          </div>
-          <div class="pomodoro-controls">
-            <button class="btn primary" id="pomo-start" type="button">Start</button>
-            <button class="btn danger-outline" id="pomo-reset" type="button">Reset</button>
-          </div>
-        </div>
-        <div class="card timer-card">
-          <div class="timer-label">Stopwatch</div>
-          <div class="pomodoro-time" id="sw-time">00:00</div>
-          <div class="pomodoro-controls">
-            <button class="btn primary" id="sw-start" type="button">Start</button>
-            <button class="btn danger-outline" id="sw-reset" type="button">Reset</button>
-          </div>
+      <div class="card">
+        <h2>Timer</h2>
+        <div style="font-family: var(--mono); font-size: 36px; text-align: center; margin: 10px 0;">25:00</div>
+        <div class="row" style="justify-content: center;">
+          <button class="btn">Start</button>
+          <button class="btn">Reset</button>
         </div>
       </div>
     </div>
 
-    <!-- scratch panel -->
     <div class="panel-col">
       <div class="col-label">Scratch</div>
       <div class="card">
         <h2>Notes</h2>
-        <textarea id="notes" placeholder="Quick notes..."></textarea>
-        <div class="row">
-          <button class="btn primary" id="notes-copy">Copy</button>
-          <button class="btn" id="notes-save">Save .txt</button>
-          <button class="btn danger-outline" id="notes-clear">Clear</button>
-        </div>
-      </div>
-      <div class="card">
-        <h2>Clean Text</h2>
-        <textarea id="cleaner" placeholder="Paste text to strip extra spaces, blank lines and duplicate words..."></textarea>
-        <div class="row">
-          <button class="btn primary" id="cleaner-clean">Clean</button>
-          <button class="btn" id="cleaner-copy">Copy</button>
-          <button class="btn danger-outline" id="cleaner-clear">Clear</button>
-        </div>
+        <textarea style="min-height: 90px;"></textarea>
       </div>
     </div>
 
-    <!-- lookup panel -->
     <div class="panel-col">
       <div class="col-label">Lookup</div>
       <div class="card">
         <h2>Wikipedia</h2>
-        <div class="search-row">
-          <input type="text" id="wiki-input" placeholder="Search Wikipedia...">
-          <button class="btn primary" id="wiki-btn">Search</button>
+        <div class="row">
+          <input type="text" style="flex:1; background: var(--surface-alt); border: 1px solid var(--border); border-radius: 6px; padding: 7px;">
+          <button class="btn">🔍</button>
         </div>
-        <div class="wiki-status" id="wiki-status"></div>
-      </div>
-      <div class="card">
-        <h2>Redirects</h2>
-        <div class="row" id="redirect-links"></div>
       </div>
     </div>
   </section>
 </div>
 
-<footer>Personal project. No support or bug fixes provided.</footer>
+<footer>Personal project.</footer>
 
-<!-- command palette overlay -->
-<div class="cmdk-overlay" id="cmdk-overlay">
-  <div class="cmdk-box">
-    <input type="text" id="cmdk-input" class="cmdk-input" placeholder="Jump to a model or link..." autocomplete="off" spellcheck="false">
-    <div class="cmdk-list" id="cmdk-list"></div>
-    <div class="cmdk-hint">↑↓ navigate · Enter open · Esc close</div>
-  </div>
-</div>
-
-<!-- shortcuts overlay -->
-<div class="cmdk-overlay" id="shortcuts-overlay">
-  <div class="cmdk-box">
-    <div class="shortcuts-modal-title">Shortcuts</div>
-    <div id="shortcuts-body" class="shortcuts-modal-body"></div>
-    <div class="cmdk-hint">Esc close</div>
-  </div>
-</div>
-
-<script>
-(function () {
-  "use strict";
-
-  /* ============ DATA ============ */
-  var AIS = [
-    { name: "ChatGPT",    desc: "General purpose",  url: "https://chat.openai.com/",      accent: "#10A37F" },
-    { name: "Claude",     desc: "Writing & code",   url: "https://claude.ai/new",         accent: "#D97757" },
-    { name: "Gemini",     desc: "Multimodal",       url: "https://gemini.google.com/app", accent: "#4E8CFF" },
-    { name: "Mistral",    desc: "Open-weight / EU", url: "https://chat.mistral.ai/chat",  accent: "#FF7000" },
-    { name: "Perplexity", desc: "Web research",     url: "https://www.perplexity.ai/",    accent: "#20B8CD" },
-    { name: "Grok",       desc: "Real-time data",   url: "https://grok.com/",             accent: "#9AA0A6" },
-    { name: "DeepSeek",   desc: "Reasoning & code", url: "https://chat.deepseek.com/",    accent: "#4D6BFE" },
-    { name: "DuckDuckGo", desc: "Privacy",          url: "https://duckduckgo.com/aichat", accent: "#DE5833" }
-  ];
-
-  var PROMPTS_CONTENT = [
-    { label: "[Sum]",       text: "Summarize the following text concisely, focusing on the main points:\n\n" },
-    { label: "[Explain]",   text: "Explain the following concept in simple terms, as if I were a beginner:\n\n" },
-    { label: "[Fix]",       text: "Please correct the grammar, flow, and clarity of the following text while keeping the original meaning intact:\n\n" },
-    { label: "[Translate]", text: "Translate the following text into natural sounding \"Language\":\n\n" },
-    { label: "[List]",      text: "Organize the following information into a clear bullet-point list with a brief introduction and conclusion:\n\n" },
-    { label: "[Ideas]",     text: "Give me 5 creative ideas or perspectives regarding the following topic:\n\n" },
-    { label: "[Review]",    text: "Review the following text and point out any logical fallacies or missing information:\n\n" }
-  ];
-
-  var PROMPTS_STYLE = [
-    { label: "[Lang]",      text: "From now on, please respond to all my messages exclusively in [language]." },
-    { label: "[Assume]",    text: "Mention any assumptions you are making in your answer." },
-    { label: "[Brief]",     text: "Keep your answer brief and avoid unnecessary filler words." },
-    { label: "[Table]",     text: "Present the pros and cons in a table format." },
-    { label: "[Steps]",     text: "Break this down into a step-by-step guide." },
-    { label: "[Ask]",       text: "Before answering, ask me any questions you need to clarify my request." }
-  ];
-
-  var PROMPTS_MOOD = [
-    { label: "[Formal]",   text: "Respond in a formal, professional tone." },
-    { label: "[Casual]",   text: "Respond in a casual, relaxed tone." },
-    { label: "[Sincere]",  text: "Respond in a sincere, honest, and direct tone." },
-    { label: "[Friendly]", text: "Respond in a warm, friendly tone." },
-    { label: "[Playful]",  text: "Respond in a playful, lighthearted tone." }
-  ];
-
-  /* ============ TIMER / STOPWATCH ============ */
-  function formatTime(s) {
-    var m = Math.floor(s / 60), sec = s % 60;
-    return (m < 10 ? "0" : "") + m + ":" + (sec < 10 ? "0" : "") + sec;
-  }
-
-  function beep() {
-    try {
-      var Ctx = window.AudioContext || window.webkitAudioContext;
-      var ctx = new Ctx();
-      [0, 0.3, 0.6].forEach(function (delay) {
-        var osc = ctx.createOscillator();
-        var gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.value = 880;
-        gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay);
-        gain.gain.exponentialRampToValueAtTime(0.6, ctx.currentTime + delay + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + 0.4);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(ctx.currentTime + delay);
-        osc.stop(ctx.currentTime + delay + 0.4);
-      });
-    } catch (e) { /* audio not available */ }
-  }
-
-  var pomoPreset = 25 * 60;
-  var pomoSeconds = pomoPreset;
-  var pomoInterval = null;
-  var pomoRunning = false;
-  var pomoTimeEl = document.getElementById("pomo-time");
-  var pomoStartBtn = document.getElementById("pomo-start");
-  var pomoMinutesInput = document.getElementById("pomo-minutes");
-
-  function renderPomo() { pomoTimeEl.textContent = formatTime(pomoSeconds); }
-  renderPomo();
-
-  function pomoTick() {
-    if (pomoSeconds <= 0) {
-      clearInterval(pomoInterval);
-      pomoInterval = null;
-      pomoRunning = false;
-      pomoStartBtn.textContent = "Start";
-      pomoTimeEl.textContent = "Done";
-      beep();
-      return;
-    }
-    pomoSeconds--;
-    renderPomo();
-  }
-
-  pomoStartBtn.addEventListener("click", function () {
-    if (pomoRunning) {
-      clearInterval(pomoInterval);
-      pomoInterval = null;
-      pomoRunning = false;
-      pomoStartBtn.textContent = "Start";
-    } else {
-      if (pomoSeconds <= 0) pomoSeconds = pomoPreset;
-      pomoRunning = true;
-      pomoStartBtn.textContent = "Pause";
-      pomoInterval = setInterval(pomoTick, 1000);
-    }
-  });
-
-  document.getElementById("pomo-reset").addEventListener("click", function () {
-    clearInterval(pomoInterval);
-    pomoInterval = null;
-    pomoRunning = false;
-    pomoStartBtn.textContent = "Start";
-    pomoSeconds = pomoPreset;
-    renderPomo();
-  });
-
-  document.getElementById("pomo-set").addEventListener("click", function () {
-    var minutes = parseInt(pomoMinutesInput.value, 10);
-    if (!minutes || minutes < 1) minutes = 1;
-    if (minutes > 180) minutes = 180;
-    pomoMinutesInput.value = minutes;
-    clearInterval(pomoInterval);
-    pomoInterval = null;
-    pomoRunning = false;
-    pomoStartBtn.textContent = "Start";
-    pomoPreset = minutes * 60;
-    pomoSeconds = pomoPreset;
-    renderPomo();
-  });
-
-  var swSeconds = 0;
-  var swInterval = null;
-  var swRunning = false;
-  var swTimeEl = document.getElementById("sw-time");
-  var swStartBtn = document.getElementById("sw-start");
-
-  function renderSw() { swTimeEl.textContent = formatTime(swSeconds); }
-
-  swStartBtn.addEventListener("click", function () {
-    if (swRunning) {
-      clearInterval(swInterval);
-      swInterval = null;
-      swRunning = false;
-      swStartBtn.textContent = "Start";
-    } else {
-      swRunning = true;
-      swStartBtn.textContent = "Pause";
-      swInterval = setInterval(function () { swSeconds++; renderSw(); }, 1000);
-    }
-  });
-
-  document.getElementById("sw-reset").addEventListener("click", function () {
-    clearInterval(swInterval);
-    swInterval = null;
-    swRunning = false;
-    swStartBtn.textContent = "Start";
-    swSeconds = 0;
-    renderSw();
-  });
-
-  /* ============ THEME ============ */
-  var root = document.documentElement;
-  function applyTheme(t) {
-    root.setAttribute("data-theme", t);
-    localStorage.setItem("acd-theme", t);
-    var btn = document.getElementById("theme-toggle");
-    btn.textContent = t === "dark" ? "☾ Theme" : "☀ Theme";
-  }
-  var savedTheme = localStorage.getItem("acd-theme");
-  if (!savedTheme) {
-    savedTheme = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-  }
-  applyTheme(savedTheme);
-  document.getElementById("theme-toggle").addEventListener("click", function () {
-    applyTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
-  });
-
-  /* ============ FOCUS MODE ============ */
-  var focusBtn = document.getElementById("focus-toggle");
-  function applyFocus(on) {
-    document.body.classList.toggle("focus-mode", on);
-    focusBtn.setAttribute("aria-pressed", on ? "true" : "false");
-    localStorage.setItem("acd-focus", on ? "1" : "0");
-  }
-  applyFocus(localStorage.getItem("acd-focus") === "1");
-  focusBtn.addEventListener("click", function () {
-    applyFocus(!document.body.classList.contains("focus-mode"));
-  });
-
-  /* ============ AI GRID ============ */
-  var grid = document.getElementById("ai-grid");
-  AIS.forEach(function (ai, i) {
-    var card = document.createElement("div");
-    card.className = "ai-card";
-    card.tabIndex = 0;
-    card.setAttribute("role", "button");
-    card.setAttribute("aria-label", "Open " + ai.name + " (Alt+" + (i + 1) + ")");
-    card.style.setProperty("--accent", ai.accent);
-    card.innerHTML =
-      '<span class="keycap">Alt+' + (i + 1) + '</span>' +
-      '<span class="name">' + ai.name + '</span>' +
-      '<span class="desc">' + ai.desc + '</span>';
-    function open() { window.open(ai.url, "_blank", "noopener"); }
-    card.addEventListener("click", open);
-    card.addEventListener("keydown", function (e) {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
-    });
-    grid.appendChild(card);
-  });
-
-  document.addEventListener("keydown", function (e) {
-    if (!e.altKey) return;
-    var n = parseInt(e.key, 10);
-    if (n >= 1 && n <= 8) {
-      e.preventDefault();
-      window.open(AIS[n - 1].url, "_blank", "noopener");
-      return;
-    }
-    var key = e.key.toLowerCase();
-    if (key === "0") {
-      e.preventDefault();
-      applyFocus(!document.body.classList.contains("focus-mode"));
-    } else if (key === "t") {
-      e.preventDefault();
-      applyTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
-    } else if (key === "n") {
-      e.preventDefault();
-      document.getElementById("notes").focus();
-    } else if (key === "c") {
-      e.preventDefault();
-      document.getElementById("cleaner").focus();
-    }
-  });
-
-  document.addEventListener("keydown", function (e) {
-    if (e.key !== "/") return;
-    var active = document.activeElement;
-    var typing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA");
-    if (typing) return;
-    e.preventDefault();
-    document.getElementById("draft").focus();
-  });
-
-  document.addEventListener("keydown", function (e) {
-    if (e.key !== "?") return;
-    var active = document.activeElement;
-    var typing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA");
-    if (ty
+</body>
+</html>
