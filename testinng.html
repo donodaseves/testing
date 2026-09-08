@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-PT">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🖼️ dase/grid</title>
+<!-- Favicon SVG com emoji de imagem -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖼️</text></svg>">
 <!-- html2pdf.js for PDF export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
@@ -108,7 +110,7 @@
 
   /* ===== Main ===== */
   .main { flex: 1; padding: 32px 40px 60px; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; width: 100%; }
-  .top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; gap: 12px; }
   .top-row h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
   .top-row .sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
@@ -123,13 +125,13 @@
   .control-group { display: flex; flex-direction: column; gap: 6px; }
   .control-group label { font-size: 12px; font-weight: 700; color: var(--muted); }
   .control-group select, .control-group input[type="file"], .control-group input[type="text"], .control-group input[type="number"], .control-group input[type="range"] {
-    padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font-size: 13px; outline: none;
+    padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font-size: 13px; outline: none; width: 100%;
   }
   .control-group input[type="range"] { padding: 0; cursor: pointer; accent-color: var(--accent); }
 
   .btn-action {
     background: var(--accent); color: #fff; border: none; padding: 10px 18px; border-radius: 10px;
-    font-weight: 700; font-size: 13px; cursor: pointer; transition: opacity 0.2s; display: inline-flex; align-items: center; gap: 8px;
+    font-weight: 700; font-size: 13px; cursor: pointer; transition: opacity 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0;
   }
   .btn-action:hover { opacity: 0.9; }
   .btn-action:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; opacity: 0.7; }
@@ -153,29 +155,12 @@
     background: var(--panel);
     cursor: pointer;
     transition: border-color 0.2s, background-color 0.2s;
+    word-break: break-word;
   }
   .drop-zone.dragover {
     border-color: var(--accent);
     background: var(--bar);
   }
-
-  /* Safe Zone Overlay */
-  .safe-zone-overlay {
-    position: absolute;
-    top: 10%; bottom: 10%; left: 10%; right: 10%;
-    border: 2px dashed rgba(255, 90, 60, 0.8);
-    pointer-events: none;
-    display: none;
-    box-sizing: border-box;
-  }
-  .safe-zone-overlay::after {
-    content: 'SAFE ZONE';
-    position: absolute;
-    top: 4px; right: 8px;
-    font-size: 10px; font-weight: 800;
-    color: rgba(255, 90, 60, 0.8);
-  }
-  .show-safe-zone .safe-zone-overlay { display: block; }
 
   /* Color Swatches */
   .palette-container { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
@@ -190,17 +175,17 @@
   .preview-stage {
     background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 30px;
     display: flex; flex-direction: column; gap: 24px; align-items: center; min-height: 400px;
-    position: relative; overflow: hidden;
+    position: relative; overflow: hidden; width: 100%;
   }
 
   /* Mockup Visual Elements */
   .mockup-card { width: 100%; max-width: 800px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; position: relative; }
   .mockup-banner { width: 100%; background-size: cover; background-position: center; background-color: var(--bar); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; font-weight: 600; position: relative; }
   
-  .mockup-avatar-wrapper { position: relative; display: inline-block; }
+  .mockup-avatar-wrapper { position: relative; display: inline-block; flex-shrink: 0; }
   .mockup-avatar {
     background-size: cover; background-position: center; background-color: var(--line);
-    border: 3px solid var(--panel); position: relative;
+    border: 3px solid var(--panel); position: relative; flex-shrink: 0;
   }
   .mockup-avatar.circle { border-radius: 50%; }
   .mockup-avatar.rounded { border-radius: 18%; }
@@ -227,7 +212,7 @@
   .status-dnd { background: #f23f43; }
   .status-offline { background: #80848e; }
 
-  .avatar-size-container { display: flex; gap: 20px; align-items: flex-end; margin-top: 10px; }
+  .avatar-size-container { display: flex; gap: 20px; align-items: flex-end; margin-top: 10px; flex-wrap: wrap; }
 
   /* Watermark Styling */
   .color-pickers-row {
@@ -237,7 +222,7 @@
     display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); font-weight: 600;
   }
   input[type="color"] {
-    -webkit-appearance: none; border: 1px solid var(--line); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; background: none; padding: 0;
+    -webkit-appearance: none; border: 1px solid var(--line); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; background: none; padding: 0; flex-shrink: 0;
   }
   input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
   input[type="color"]::-webkit-color-swatch { border: none; border-radius: 6px; }
@@ -253,7 +238,7 @@
   .modal-overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
-    z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+    z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; padding: 16px;
   }
   .modal-overlay.active { opacity: 1; pointer-events: auto; }
   .modal { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; width: 100%; max-width: 360px; }
@@ -267,9 +252,23 @@
 
   footer { margin-top: auto; padding-top: 40px; text-align: center; font-size: 12.5px; color: var(--muted); }
 
+  /* ===== Mobile Responsiveness ===== */
   @media (max-width: 900px) {
-    .sidebar { display: none; }
-    .main { padding: 24px; }
+    body { flex-direction: column; }
+    .sidebar {
+      width: 100%; height: auto; position: relative; border-right: none;
+      border-bottom: 1px solid var(--line); padding: 16px 20px; gap: 16px;
+    }
+    .brand { margin-bottom: 12px; font-size: 18px; text-align: center; }
+    .nav { flex-direction: row; justify-content: space-around; overflow-x: auto; gap: 8px; }
+    .nav a { padding: 8px 10px; font-size: 12px; white-space: nowrap; }
+    .sidebar-footer { border-top: none; padding-top: 0; }
+    .main { padding: 20px 16px 40px; }
+    .top-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .top-row .btn-action { width: 100%; }
+    .panel-box { padding: 16px; }
+    .controls-grid { grid-template-columns: 1fr; }
+    .preview-stage { padding: 16px; min-height: 250px; }
   }
 </style>
 </head>
@@ -293,14 +292,14 @@
 <div class="sidebar">
   <div class="brand">dase<span style="color: var(--accent);">/grid</span></div>
   <div class="nav">
-    <a id="navMockups" class="active" onclick="switchTab('mockups')"><span class="ico">🖼</span> Visual Mockups</a>
-    <a id="navWatermark" onclick="switchTab('watermark')"><span class="ico">💧</span> Watermark Generator</a>
-    <a id="navResizer" onclick="switchTab('resizer')"><span class="ico">✂️</span> Resizer & Crop</a>
+    <a id="navMockups" class="active" onclick="switchTab('mockups')"><span class="ico">🖼</span> Mockups Visuais</a>
+    <a id="navWatermark" onclick="switchTab('watermark')"><span class="ico">💧</span> Gerador de Marca d'Água</a>
+    <a id="navResizer" onclick="switchTab('resizer')"><span class="ico">🎨</span> Editor de Imagem</a>
   </div>
   <div class="sidebar-footer">
     <div class="storage-indicator">
       <div class="storage-header">
-        <span>Storage</span>
+        <span>Armazenamento</span>
         <span id="storageText">0 KB (0%)</span>
       </div>
       <div class="storage-bar-track">
@@ -308,267 +307,268 @@
       </div>
     </div>
 
-    <button class="reset-btn" onclick="openResetModal()">↺ Reset Storage</button>
+    <button class="reset-btn" onclick="openResetModal()">↺ Limpar Armazenamento</button>
 
     <div class="user-box">
       <div class="theme-pill-switch">
-        <button class="theme-pill-btn active" id="btnLight" onclick="setTheme('light')" aria-label="Light Mode">☀</button>
-        <button class="theme-pill-btn" id="btnDark" onclick="setTheme('dark')" aria-label="Dark Mode">☾</button>
+        <button class="theme-pill-btn active" id="btnLight" onclick="setTheme('light')" aria-label="Modo Claro">☀</button>
+        <button class="theme-pill-btn" id="btnDark" onclick="setTheme('dark')" aria-label="Modo Escuro">☾</button>
       </div>
-      <a href="https://donodaseves.github.io/testing/" class="icon-btn" title="Go to website">D</a>
+      <a href="https://donodaseves.github.io/testing/" class="icon-btn" title="Ir para o website">D</a>
     </div>
   </div>
 </div>
 
 <div class="main">
 
-  <!-- TAB 1: VISUAL MOCKUPS -->
+  <!-- TAB 1: MOCKUPS VISUAIS -->
   <div id="tabMockups" class="tab-content active">
     <div class="top-row">
       <div>
-        <h1>Banner and Cover Tester</h1>
-        <div class="sub">Simulate and validate your social media designs before publishing.</div>
+        <h1>Testador de Banners e Capas</h1>
+        <div class="sub">Simule e valide os seus designs para redes sociais antes de publicar.</div>
       </div>
-      <button class="btn-action" onclick="exportPDF()">📄 Export PDF</button>
+      <button class="btn-action" onclick="exportPDF()">📄 Exportar PDF</button>
     </div>
 
-    <!-- Uploads and Filter Controls -->
+    <!-- Uploads e Filtros -->
     <div class="panel-box">
-      <h2>1. Uploads & Visual Filters</h2>
+      <h2>1. Carregamentos e Filtros Visuais</h2>
       <div class="controls-grid">
         <div class="control-group">
-          <label>Banner Image</label>
+          <label>Imagem de Banner</label>
           <div class="drop-zone" id="dropBanner" onclick="document.getElementById('uploadBanner').click()">
-            Drag & Drop or Click to Upload Banner
+            Arraste e solte ou clique para carregar o Banner
             <input type="file" id="uploadBanner" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'banner')">
           </div>
         </div>
         <div class="control-group">
-          <label>Profile Picture (Avatar)</label>
+          <label>Foto de Perfil (Avatar)</label>
           <div class="drop-zone" id="dropAvatar" onclick="document.getElementById('uploadAvatar').click()">
-            Drag & Drop or Click to Upload Avatar
+            Arraste e solte ou clique para carregar o Avatar
             <input type="file" id="uploadAvatar" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'avatar')">
           </div>
         </div>
         <div class="control-group">
-          <label>Accessibility Simulator</label>
+          <label>Simulador de Acessibilidade</label>
           <select id="filterSelect" onchange="applyFilter()">
-            <option value="none">Normal (No filter)</option>
-            <option value="protanopia">Protanopia (Red-blind)</option>
-            <option value="deuteranopia">Deuteranopia (Green-blind)</option>
-            <option value="tritanopia">Tritanopia (Blue-blind)</option>
-            <option value="achromatopsia">Achromatopsia (Monochrome)</option>
-            <option value="blur">Blur (Contrast Check)</option>
+            <option value="none">Normal (Sem filtro)</option>
+            <option value="protanopia">Protanopia (Cegueira ao vermelho)</option>
+            <option value="deuteranopia">Deuteranopia (Cegueira ao verde)</option>
+            <option value="tritanopia">Tritanopia (Cegueira ao azul)</option>
+            <option value="achromatopsia">Acromatopsia (Monocromático)</option>
+            <option value="blur">Desfocado (Verificação de contraste)</option>
           </select>
         </div>
       </div>
     </div>
 
-    <!-- Platform & Badge Options -->
+    <!-- Opções de Plataforma e Perfil -->
     <div class="panel-box">
-      <h2>2. Platform & Profile Options</h2>
+      <h2>2. Opções de Plataforma e Perfil</h2>
       <div class="controls-grid">
         <div class="control-group">
-          <label>Target Platform</label>
+          <label>Plataforma Alvo</label>
           <select id="platformSelect" onchange="renderMockup()">
-            <optgroup label="Video & Live Streaming">
+            <optgroup label="Vídeo e Transmissão ao Vivo">
               <option value="yt">YouTube (Banner 16:9 / 2560x1440)</option>
               <option value="twitch">Twitch (Banner 1200x480)</option>
-              <option value="tiktok">TikTok (Vertical Format 9:16)</option>
+              <option value="tiktok">TikTok (Formato Vertical 9:16)</option>
             </optgroup>
-            <optgroup label="Social Networks">
-              <option value="twitter">Twitter / X (Header 1500x500)</option>
-              <option value="fb_ig">Facebook / Instagram (Cover 820x312)</option>
-              <option value="linkedin">LinkedIn (Cover 1584x396)</option>
+            <optgroup label="Redes Sociais">
+              <option value="twitter">Twitter / X (Cabeçalho 1500x500)</option>
+              <option value="fb_ig">Facebook / Instagram (Capa 820x312)</option>
+              <option value="linkedin">LinkedIn (Capa 1584x396)</option>
               <option value="pinterest_reddit">Pinterest / Reddit (Banner 1920x256)</option>
             </optgroup>
-            <optgroup label="Community">
-              <option value="discord">Discord (Profile Banner 600x240)</option>
+            <optgroup label="Comunidade">
+              <option value="discord">Discord (Banner de Perfil 600x240)</option>
             </optgroup>
           </select>
         </div>
         <div class="control-group">
-          <label>Profile Picture Shape</label>
+          <label>Formato da Foto de Perfil</label>
           <select id="avatarCropSelect" onchange="renderMockup()">
             <option value="circle">Circular</option>
-            <option value="rounded">Rounded Corners</option>
+            <option value="rounded">Cantos Arredondados</option>
           </select>
         </div>
         <div class="control-group">
-          <label>Badge / Status</label>
+          <label>Crachá / Estado</label>
           <select id="badgeSelect" onchange="renderMockup()">
-            <option value="none">None</option>
-            <option value="live">LIVE</option>
-            <option value="verified_blue">Verified (Blue)</option>
-            <option value="verified_gold">Verified (Gold)</option>
-            <option value="verified_gray">Verified (Gray)</option>
+            <option value="none">Nenhum</option>
+            <option value="live">EM DIRETO</option>
+            <option value="verified_blue">Verificado (Azul)</option>
+            <option value="verified_gold">Verificado (Ouro)</option>
+            <option value="verified_gray">Verificado (Cinzento)</option>
             <option value="status_online">Discord: Online</option>
-            <option value="status_dnd">Discord: Do Not Disturb</option>
-          </select>
-        </div>
-        <div class="control-group">
-          <label>Safe Zone Overlay</label>
-          <select id="safeZoneSelect" onchange="toggleSafeZone()">
-            <option value="off">Off</option>
-            <option value="on">Show Safe Zone Guide</option>
+            <option value="status_dnd">Discord: Não Incomodar</option>
           </select>
         </div>
       </div>
     </div>
 
-    <!-- Color Palette Extractor -->
+    <!-- Extrator de Paleta de Cores -->
     <div class="panel-box">
-      <h2>3. Extracted Banner Palette</h2>
+      <h2>3. Paleta Extraída do Banner</h2>
       <div id="bannerPalette" class="palette-container">
-        <span style="font-size: 12px; color: var(--muted);">Upload a banner image to extract colors.</span>
+        <span style="font-size: 12px; color: var(--muted);">Carregue uma imagem de banner para extrair as cores.</span>
       </div>
     </div>
 
-    <!-- Preview Container -->
+    <!-- Área de Pré-visualização -->
     <div class="preview-stage" id="exportArea">
       <div id="mockupContainer" class="mockup-card"></div>
 
-      <!-- Avatar Sizes -->
+      <!-- Tamanhos de Avatar -->
       <div style="width: 100%; max-width: 800px;">
-        <h2 style="font-size: 14px; color: var(--muted); margin-bottom: 12px;">Avatar Display Size Simulation</h2>
+        <h2 style="font-size: 14px; color: var(--muted); margin-bottom: 12px;">Simulação de Tamanhos de Exibição do Avatar</h2>
         <div class="avatar-size-container">
           <div style="text-align: center;">
             <div id="avatarP" class="mockup-avatar circle" style="width: 32px; height: 32px;"></div>
-            <span style="font-size: 10px; color: var(--muted);">Small (32px)</span>
+            <span style="font-size: 10px; color: var(--muted);">Pequeno (32px)</span>
           </div>
           <div style="text-align: center;">
             <div id="avatarM" class="mockup-avatar circle" style="width: 64px; height: 64px;"></div>
-            <span style="font-size: 10px; color: var(--muted);">Medium (64px)</span>
+            <span style="font-size: 10px; color: var(--muted);">Médio (64px)</span>
           </div>
           <div style="text-align: center;">
             <div id="avatarG" class="mockup-avatar circle" style="width: 96px; height: 96px;"></div>
-            <span style="font-size: 10px; color: var(--muted);">Large (96px)</span>
+            <span style="font-size: 10px; color: var(--muted);">Grande (96px)</span>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- TAB 2: WATERMARK GENERATOR -->
+  <!-- TAB 2: GERADOR DE MARCA D'ÁGUA -->
   <div id="tabWatermark" class="tab-content">
     <div class="top-row">
       <div>
-        <h1>Watermark Studio</h1>
-        <p class="sub">Add custom watermarks, logos and text protections to your images.</p>
+        <h1>Studio de Marca d'Água</h1>
+        <p class="sub">Adicione marcas d'água, logótipos e proteções de texto personalizadas às suas imagens.</p>
       </div>
       <button id="downloadBtn" class="btn-action" disabled onclick="downloadWatermarkImage()">
-        ⬇ Download Image
+        ⬇ Descarregar Imagem
       </button>
     </div>
 
     <div class="panel-box">
-      <h2>1. Image & Text Settings</h2>
+      <h2>1. Configurações de Imagem e Texto</h2>
       <div class="controls-grid">
         <div class="control-group">
-          <label for="wmImageLoader">Select Image</label>
+          <label for="wmImageLoader">Selecionar Imagem</label>
           <div class="drop-zone" id="dropWm" onclick="document.getElementById('wmImageLoader').click()">
-            Drag & Drop or Click Image
+            Arraste e solte ou clique na imagem
             <input type="file" id="wmImageLoader" accept="image/*" style="display:none">
           </div>
         </div>
         <div class="control-group">
-          <label for="wmText">Watermark Text</label>
+          <label for="wmText">Texto da Marca d'Água</label>
           <input type="text" id="wmText" value="© A minha Marca" placeholder="Escreva o texto...">
         </div>
         <div class="control-group">
-          <label for="wmStyle">Style & Position</label>
+          <label for="wmStyle">Estilo e Posição</label>
           <select id="wmStyle">
-            <option value="bottom-right">Bottom Right Corner</option>
-            <option value="bottom-left">Bottom Left Corner</option>
-            <option value="top-right">Top Right Corner</option>
-            <option value="top-left">Top Left Corner</option>
-            <option value="center">Centered Highlight</option>
-            <option value="repeat">Repeated Pattern (Diagonal Grid)</option>
-            <option value="banner">Transparent Footer Banner</option>
+            <option value="bottom-right">Canto Inferior Direito</option>
+            <option value="bottom-left">Canto Inferior Esquerdo</option>
+            <option value="top-right">Canto Superior Direito</option>
+            <option value="top-left">Canto Superior Esquerdo</option>
+            <option value="center">Destaque Central</option>
+            <option value="repeat">Padrão Repetido (Grelha Diagonal)</option>
+            <option value="banner">Banner Transparente no Rodapé</option>
           </select>
         </div>
         <div class="control-group">
-          <label for="wmFont">Typography / Font</label>
+          <label for="wmFont">Tipografia / Fonte</label>
           <select id="wmFont">
-            <option value="sans-serif">Sans-Serif (Modern)</option>
-            <option value="serif">Serif (Classic)</option>
-            <option value="monospace">Monospace (Code)</option>
-            <option value="Impact">Impact (Bold)</option>
-            <option value="Georgia">Georgia (Elegant)</option>
+            <option value="sans-serif">Sans-Serif (Moderna)</option>
+            <option value="serif">Serif (Clássica)</option>
+            <option value="monospace">Monospace (Código)</option>
+            <option value="Impact">Impact (Negrito)</option>
+            <option value="Georgia">Georgia (Elegante)</option>
           </select>
         </div>
       </div>
     </div>
 
     <div class="panel-box">
-      <h2>2. Appearance & Colors</h2>
+      <h2>2. Aparência e Cores</h2>
       <div class="controls-grid">
         <div class="control-group">
-          <label>Colors (Text / Background)</label>
+          <label>Cores (Texto / Fundo)</label>
           <div class="color-pickers-row">
             <div class="color-picker-item">
               <input type="color" id="wmColor" value="#ffffff">
-              <span>Text</span>
+              <span>Texto</span>
             </div>
             <div class="color-picker-item">
               <input type="color" id="wmBgColor" value="#000000">
-              <span>Background</span>
+              <span>Fundo</span>
             </div>
           </div>
         </div>
         <div class="control-group">
-          <label for="wmSize">Text Size (<span id="sizeVal">4</span>%)</label>
+          <label for="wmSize">Tamanho do Texto (<span id="sizeVal">4</span>%)</label>
           <input type="range" id="wmSize" min="1" max="10" value="4">
         </div>
         <div class="control-group">
-          <label for="wmOpacity">Opacity (<span id="opacityVal">70</span>%)</label>
+          <label for="wmOpacity">Opacidade (<span id="opacityVal">70</span>%)</label>
           <input type="range" id="wmOpacity" min="10" max="100" value="70">
         </div>
       </div>
     </div>
 
-    <!-- Preview Canvas Area -->
+    <!-- Extrator de Paleta na Marca d'Água -->
+    <div class="panel-box">
+      <h2>3. Paleta Extraída da Imagem</h2>
+      <div id="wmPalette" class="palette-container">
+        <span style="font-size: 12px; color: var(--muted);">Carregue uma imagem para extrair as cores.</span>
+      </div>
+    </div>
+
+    <!-- Área de Pré-visualização -->
     <div class="preview-stage">
       <div id="wmPlaceholder" class="placeholder-text">
         <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="opacity: 0.5;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 002-2H6a2 2 0 00-2 2v12a2 2 0 00-2 2z"></path></svg>
-        <p>Upload an image above to start applying watermarks</p>
+        <p>Carregue uma imagem acima para começar a aplicar marcas d'água</p>
       </div>
       <canvas id="wmCanvas"></canvas>
     </div>
   </div>
 
-  <!-- TAB 3: RESIZER, CROP & ADJUSTMENTS -->
+  <!-- TAB 3: EDITOR DE IMAGEM -->
   <div id="tabResizer" class="tab-content">
     <div class="top-row">
       <div>
-        <h1>Image Resizer, Crop & Adjustments</h1>
-        <p class="sub">Resize, crop, adjust visual parameters and convert formats.</p>
+        <h1>Editor de Imagem</h1>
+        <p class="sub">Redimensione, ajuste parâmetros visuais e converta formatos de imagem.</p>
       </div>
       <button id="downloadResizedBtn" class="btn-action" disabled onclick="downloadResizedImage()">
-        ⬇ Download Processed Image
+        ⬇ Descarregar Imagem Processada
       </button>
     </div>
 
     <div class="panel-box">
-      <h2>1. Image & Dimensions</h2>
+      <h2>1. Imagem e Dimensões</h2>
       <div class="controls-grid">
         <div class="control-group">
-          <label>Select Image</label>
+          <label>Selecionar Imagem</label>
           <div class="drop-zone" id="dropResize" onclick="document.getElementById('resizeImageLoader').click()">
-            Drag & Drop or Click Image
+            Arraste e solte ou clique na imagem
             <input type="file" id="resizeImageLoader" accept="image/*" style="display:none">
           </div>
         </div>
         <div class="control-group">
-          <label>Width (px)</label>
-          <input type="number" id="resizeWidth" placeholder="Width">
+          <label>Largura (px)</label>
+          <input type="number" id="resizeWidth" placeholder="Largura">
         </div>
         <div class="control-group">
-          <label>Height (px)</label>
-          <input type="number" id="resizeHeight" placeholder="Height">
+          <label>Altura (px)</label>
+          <input type="number" id="resizeHeight" placeholder="Altura">
         </div>
         <div class="control-group">
-          <label>Export Format</label>
+          <label>Formato de Exportação</label>
           <select id="exportFormat">
             <option value="image/png">PNG</option>
             <option value="image/jpeg">JPEG</option>
@@ -579,49 +579,57 @@
     </div>
 
     <div class="panel-box">
-      <h2>2. Visual Adjustments</h2>
+      <h2>2. Ajustes Visuais</h2>
       <div class="controls-grid">
         <div class="control-group">
-          <label>Brightness (<span id="brightnessVal">100</span>%)</label>
+          <label>Brilho (<span id="brightnessVal">100</span>%)</label>
           <input type="range" id="adjBrightness" min="0" max="200" value="100">
         </div>
         <div class="control-group">
-          <label>Contrast (<span id="contrastVal">100</span>%)</label>
+          <label>Contraste (<span id="contrastVal">100</span>%)</label>
           <input type="range" id="adjContrast" min="0" max="200" value="100">
         </div>
         <div class="control-group">
-          <label>Saturation (<span id="saturateVal">100</span>%)</label>
+          <label>Saturação (<span id="saturateVal">100</span>%)</label>
           <input type="range" id="adjSaturate" min="0" max="200" value="100">
         </div>
         <div class="control-group">
-          <label>Blur (<span id="blurVal">0</span>px)</label>
+          <label>Desfocar (<span id="blurVal">0</span>px)</label>
           <input type="range" id="adjBlur" min="0" max="20" value="0">
         </div>
       </div>
     </div>
 
+    <!-- Extrator de Paleta no Editor -->
+    <div class="panel-box">
+      <h2>3. Paleta Extraída da Imagem</h2>
+      <div id="resizePalette" class="palette-container">
+        <span style="font-size: 12px; color: var(--muted);">Carregue uma imagem para extrair as cores.</span>
+      </div>
+    </div>
+
     <div class="preview-stage">
       <div id="resizePlaceholder" class="placeholder-text">
-        <p>Upload an image above to start editing</p>
+        <p>Carregue uma imagem acima para começar a editar</p>
       </div>
       <canvas id="resizeCanvas"></canvas>
     </div>
   </div>
 
   <footer>
-    dase/grid — Visual testing tool. Built with native styling.
+    dase/grid — Ferramenta de testes visuais.
   </footer>
 </div>
 
-<!-- Reset LocalStorage Modal -->
+<!-- Modal para Limpar LocalStorage -->
 <div class="modal-overlay" id="resetModal">
   <div class="modal">
-    <h3>Reset LocalStorage</h3>
-    <p>Type <strong>"dase"</strong> below to confirm deleting all local data.</p>
+    <h3>Limpar Armazenamento</h3>
+    <p>Escreva <strong>"dase"</strong> abaixo para confirmar a eliminação de todos os dados locais.</p>
     <input type="text" id="confirmInput" placeholder="dase" autocomplete="off" />
     <div class="modal-actions">
-      <button class="modal-btn cancel" onclick="closeResetModal()">Cancel</button>
-      <button class="modal-btn confirm" onclick="confirmReset()">Delete All</button>
+      <button class="modal-btn cancel" onclick="closeResetModal()">Cancelar</button>
+      <button class="modal-btn confirm" onclick="confirmReset()">Eliminar Tudo</button>
     </div>
   </div>
 </div>
@@ -629,10 +637,14 @@
 <script>
 let state = {
   bannerImg: localStorage.getItem('dase_banner') || '',
-  avatarImg: localStorage.getItem('dase_avatar') || ''
+  avatarImg: localStorage.getItem('dase_avatar') || '',
+  theme: localStorage.getItem('dase_theme') || 'light'
 };
 
-/* Navigation Tabs */
+/* Inicializar Tema */
+setTheme(state.theme, false);
+
+/* Navegação por Abas */
 function switchTab(tabName) {
   document.getElementById('navMockups').classList.toggle('active', tabName === 'mockups');
   document.getElementById('navWatermark').classList.toggle('active', tabName === 'watermark');
@@ -643,14 +655,18 @@ function switchTab(tabName) {
   document.getElementById('tabResizer').classList.toggle('active', tabName === 'resizer');
 }
 
-function setTheme(mode) {
+function setTheme(mode, save = true) {
   const root = document.documentElement;
   root.setAttribute('data-theme', mode === 'dark' ? 'dark' : 'light');
   document.getElementById('btnLight').classList.toggle('active', mode === 'light');
   document.getElementById('btnDark').classList.toggle('active', mode === 'dark');
+  if (save) {
+    localStorage.setItem('dase_theme', mode);
+    updateStorageVisualizer();
+  }
 }
 
-/* Modal Logic */
+/* Lógica do Modal */
 function openResetModal() {
   document.getElementById('resetModal').classList.add('active');
   document.getElementById('confirmInput').value = '';
@@ -665,17 +681,13 @@ function confirmReset() {
   const input = document.getElementById('confirmInput').value.trim();
   if (input === 'dase') {
     localStorage.clear();
-    state.bannerImg = '';
-    state.avatarImg = '';
-    renderMockup();
-    updateStorageVisualizer();
-    closeResetModal();
+    location.reload();
   } else {
-    alert('Incorrect confirmation code. Type "dase" to confirm.');
+    alert('Código de confirmação incorreto. Escreva "dase" para confirmar.');
   }
 }
 
-/* Storage Visualizer */
+/* Visualizador de Armazenamento */
 function updateStorageVisualizer() {
   let totalBytes = 0;
   for (let key in localStorage) {
@@ -692,9 +704,10 @@ function updateStorageVisualizer() {
   document.getElementById('storageBar').style.width = `${Math.max(percentage, 2)}%`;
 }
 
-/* Setup Drag and Drop */
+/* Configurar Drag and Drop */
 function setupDragAndDrop(dropId, inputId, callback) {
   const zone = document.getElementById(dropId);
+  if (!zone) return;
   ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
     zone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
   });
@@ -720,7 +733,7 @@ setupDragAndDrop('dropAvatar', 'uploadAvatar', handleImageUpload);
 setupDragAndDrop('dropWm', 'wmImageLoader', handleWatermarkImage);
 setupDragAndDrop('dropResize', 'resizeImageLoader', handleResizeImage);
 
-/* Image Upload Handling for Mockups */
+/* Upload de Imagens nos Mockups */
 function handleImageUpload(e, type) {
   const file = e.target ? e.target.files[0] : e;
   if (!file) return;
@@ -732,7 +745,7 @@ function handleImageUpload(e, type) {
       if (type === 'banner') {
         state.bannerImg = dataUrl;
         localStorage.setItem('dase_banner', dataUrl);
-        extractColorPalette(dataUrl);
+        extractColorPalette(dataUrl, 'bannerPalette');
       } else {
         state.avatarImg = dataUrl;
         localStorage.setItem('dase_avatar', dataUrl);
@@ -740,15 +753,15 @@ function handleImageUpload(e, type) {
       updateStorageVisualizer();
       renderMockup();
     } catch (err) {
-      alert("The image exceeds the available local storage limit. Preview will remain active.");
+      alert("A imagem excede o limite do armazenamento local. A pré-visualização continuará ativa.");
       renderMockup();
     }
   };
   reader.readAsDataURL(file);
 }
 
-/* Color Palette Extractor */
-function extractColorPalette(imgSrc) {
+/* Extrator de Paleta de Cores Generico */
+function extractColorPalette(imgSrc, targetContainerId) {
   const img = new Image();
   img.crossOrigin = 'Anonymous';
   img.onload = function() {
@@ -766,14 +779,15 @@ function extractColorPalette(imgSrc) {
       if (colors.length >= 6) break;
     }
 
-    const container = document.getElementById('bannerPalette');
+    const container = document.getElementById(targetContainerId);
+    if (!container) return;
     container.innerHTML = '';
     colors.forEach(color => {
       const swatch = document.createElement('div');
       swatch.className = 'color-swatch';
       swatch.style.backgroundColor = color;
       swatch.innerText = color;
-      swatch.title = `Click to copy ${color}`;
+      swatch.title = `Clique para copiar ${color}`;
       swatch.onclick = () => navigator.clipboard.writeText(color);
       container.appendChild(swatch);
     });
@@ -781,17 +795,7 @@ function extractColorPalette(imgSrc) {
   img.src = imgSrc;
 }
 
-/* Safe Zone Guide */
-function toggleSafeZone() {
-  const val = document.getElementById('safeZoneSelect').value;
-  const banner = document.querySelector('.mockup-banner');
-  if (banner) {
-    if (val === 'on') banner.classList.add('show-safe-zone');
-    else banner.classList.remove('show-safe-zone');
-  }
-}
-
-/* Visual Filters */
+/* Filtros Visuais */
 function applyFilter() {
   const filter = document.getElementById('filterSelect').value;
   const stage = document.getElementById('exportArea');
@@ -802,7 +806,7 @@ function applyFilter() {
   }
 }
 
-/* Render Mockup */
+/* Renderizar Mockup */
 function renderMockup() {
   const platform = document.getElementById('platformSelect').value;
   const crop = document.getElementById('avatarCropSelect').value;
@@ -823,7 +827,7 @@ function renderMockup() {
   const avatarStyle = state.avatarImg ? `background-image: url('${state.avatarImg}');` : '';
 
   let badgeHtml = '';
-  if (badge === 'live') badgeHtml = `<div class="badge-overlay">LIVE</div>`;
+  if (badge === 'live') badgeHtml = `<div class="badge-overlay">EM DIRETO</div>`;
   if (badge === 'verified_blue') badgeHtml = `<span class="badge-verified blue">✓</span>`;
   if (badge === 'verified_gold') badgeHtml = `<span class="badge-verified gold">✓</span>`;
   if (badge === 'verified_gray') badgeHtml = `<span class="badge-verified gray">✓</span>`;
@@ -831,9 +835,8 @@ function renderMockup() {
   if (badge === 'status_dnd') badgeHtml = `<div class="discord-status status-dnd"></div>`;
 
   container.innerHTML = `
-    <div class="mockup-banner ${document.getElementById('safeZoneSelect')?.value === 'on' ? 'show-safe-zone' : ''}" style="aspect-ratio: ${aspectRatio}; ${bannerStyle}">
-      ${!state.bannerImg ? 'Upload a Banner Image' : ''}
-      <div class="safe-zone-overlay"></div>
+    <div class="mockup-banner" style="aspect-ratio: ${aspectRatio}; ${bannerStyle}">
+      ${!state.bannerImg ? 'Carregue uma imagem de banner' : ''}
     </div>
     <div style="padding: 16px; display: flex; align-items: center; gap: 16px;">
       <div class="mockup-avatar-wrapper">
@@ -842,10 +845,10 @@ function renderMockup() {
       </div>
       <div>
         <div style="font-weight: 700; font-size: 16px; display: flex; align-items: center;">
-          Profile Name
+          Nome de Perfil
           ${badge.startsWith('verified_') ? badgeHtml : ''}
         </div>
-        <div style="font-size: 12px; color: var(--muted);">@username</div>
+        <div style="font-size: 12px; color: var(--muted);">@utilizador</div>
       </div>
     </div>
   `;
@@ -858,10 +861,10 @@ function renderMockup() {
     }
   });
 
-  if (state.bannerImg) extractColorPalette(state.bannerImg);
+  if (state.bannerImg) extractColorPalette(state.bannerImg, 'bannerPalette');
 }
 
-/* PDF Export */
+/* Exportar PDF */
 function exportPDF() {
   const element = document.getElementById('exportArea');
   const opt = {
@@ -874,7 +877,7 @@ function exportPDF() {
   html2pdf().set(opt).from(element).save();
 }
 
-/* ===== WATERMARK GENERATOR ENGINE ===== */
+/* ===== GERADOR DE MARCA D'ÁGUA ===== */
 const wmImageLoader = document.getElementById('wmImageLoader');
 const wmCanvas = document.getElementById('wmCanvas');
 const wmCtx = wmCanvas.getContext('2d');
@@ -916,6 +919,7 @@ function handleWatermarkImage(e) {
       wmPlaceholder.style.display = 'none';
       wmCanvas.style.display = 'block';
       downloadBtn.disabled = false;
+      extractColorPalette(event.target.result, 'wmPalette');
       updateWatermarkCanvas();
     }
     wmImg.src = event.target.result;
@@ -1021,12 +1025,12 @@ function updateWatermarkCanvas() {
 function downloadWatermarkImage() {
   if (!wmImgLoaded) return;
   const link = document.createElement('a');
-  link.download = 'watermark-image.png';
+  link.download = 'imagem-marca-dagua.png';
   link.href = wmCanvas.toDataURL('image/png');
   link.click();
 }
 
-/* ===== RESIZER & ADJUSTMENTS ENGINE ===== */
+/* ===== EDITOR DE IMAGEM ===== */
 const resizeImageLoader = document.getElementById('resizeImageLoader');
 const resizeCanvas = document.getElementById('resizeCanvas');
 const resizeCtx = resizeCanvas.getContext('2d');
@@ -1061,6 +1065,7 @@ function handleResizeImage(e) {
       resizePlaceholder.style.display = 'none';
       resizeCanvas.style.display = 'block';
       downloadResizedBtn.disabled = false;
+      extractColorPalette(event.target.result, 'resizePalette');
       updateResizeCanvas();
     };
     resizeImg.src = event.target.result;
@@ -1092,12 +1097,12 @@ function downloadResizedImage() {
   const format = document.getElementById('exportFormat').value;
   const ext = format.split('/')[1];
   const link = document.createElement('a');
-  link.download = `edited-image.${ext}`;
+  link.download = `imagem-editada.${ext}`;
   link.href = resizeCanvas.toDataURL(format);
   link.click();
 }
 
-// Initialization
+// Inicialização
 updateStorageVisualizer();
 renderMockup();
 </script>
