@@ -122,7 +122,7 @@
   .controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
   .control-group { display: flex; flex-direction: column; gap: 6px; }
   .control-group label { font-size: 12px; font-weight: 700; color: var(--muted); }
-  .control-group select, .control-group input[type="file"], .control-group input[type="text"], .control-group input[type="range"] {
+  .control-group select, .control-group input[type="file"], .control-group input[type="text"], .control-group input[type="number"], .control-group input[type="range"] {
     padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font-size: 13px; outline: none;
   }
   .control-group input[type="range"] { padding: 0; cursor: pointer; accent-color: var(--accent); }
@@ -144,6 +144,48 @@
   .filter-achromatopsia { filter: grayscale(100%); }
   .filter-blur { filter: blur(4px); }
 
+  /* Drop Zone */
+  .drop-zone {
+    border: 2px dashed var(--line);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    background: var(--panel);
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  .drop-zone.dragover {
+    border-color: var(--accent);
+    background: var(--bar);
+  }
+
+  /* Safe Zone Overlay */
+  .safe-zone-overlay {
+    position: absolute;
+    top: 10%; bottom: 10%; left: 10%; right: 10%;
+    border: 2px dashed rgba(255, 90, 60, 0.8);
+    pointer-events: none;
+    display: none;
+    box-sizing: border-box;
+  }
+  .safe-zone-overlay::after {
+    content: 'SAFE ZONE';
+    position: absolute;
+    top: 4px; right: 8px;
+    font-size: 10px; font-weight: 800;
+    color: rgba(255, 90, 60, 0.8);
+  }
+  .show-safe-zone .safe-zone-overlay { display: block; }
+
+  /* Color Swatches */
+  .palette-container { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .color-swatch {
+    width: 32px; height: 32px; border-radius: 6px;
+    border: 1px solid var(--line); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #fff; text-shadow: 0 0 2px #000;
+  }
+
   /* Preview Container */
   .preview-stage {
     background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 30px;
@@ -153,7 +195,7 @@
 
   /* Mockup Visual Elements */
   .mockup-card { width: 100%; max-width: 800px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; position: relative; }
-  .mockup-banner { width: 100%; background-size: cover; background-position: center; background-color: var(--bar); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; font-weight: 600; }
+  .mockup-banner { width: 100%; background-size: cover; background-position: center; background-color: var(--bar); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; font-weight: 600; position: relative; }
   
   .mockup-avatar-wrapper { position: relative; display: inline-block; }
   .mockup-avatar {
@@ -253,6 +295,7 @@
   <div class="nav">
     <a id="navMockups" class="active" onclick="switchTab('mockups')"><span class="ico">🖼</span> Visual Mockups</a>
     <a id="navWatermark" onclick="switchTab('watermark')"><span class="ico">💧</span> Watermark Generator</a>
+    <a id="navResizer" onclick="switchTab('resizer')"><span class="ico">✂️</span> Resizer & Crop</a>
   </div>
   <div class="sidebar-footer">
     <div class="storage-indicator">
@@ -295,11 +338,17 @@
       <div class="controls-grid">
         <div class="control-group">
           <label>Banner Image</label>
-          <input type="file" id="uploadBanner" accept="image/*" onchange="handleImageUpload(event, 'banner')">
+          <div class="drop-zone" id="dropBanner" onclick="document.getElementById('uploadBanner').click()">
+            Drag & Drop or Click to Upload Banner
+            <input type="file" id="uploadBanner" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'banner')">
+          </div>
         </div>
         <div class="control-group">
           <label>Profile Picture (Avatar)</label>
-          <input type="file" id="uploadAvatar" accept="image/*" onchange="handleImageUpload(event, 'avatar')">
+          <div class="drop-zone" id="dropAvatar" onclick="document.getElementById('uploadAvatar').click()">
+            Drag & Drop or Click to Upload Avatar
+            <input type="file" id="uploadAvatar" accept="image/*" style="display:none" onchange="handleImageUpload(event, 'avatar')">
+          </div>
         </div>
         <div class="control-group">
           <label>Accessibility Simulator</label>
@@ -357,6 +406,21 @@
             <option value="status_dnd">Discord: Do Not Disturb</option>
           </select>
         </div>
+        <div class="control-group">
+          <label>Safe Zone Overlay</label>
+          <select id="safeZoneSelect" onchange="toggleSafeZone()">
+            <option value="off">Off</option>
+            <option value="on">Show Safe Zone Guide</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Color Palette Extractor -->
+    <div class="panel-box">
+      <h2>3. Extracted Banner Palette</h2>
+      <div id="bannerPalette" class="palette-container">
+        <span style="font-size: 12px; color: var(--muted);">Upload a banner image to extract colors.</span>
       </div>
     </div>
 
@@ -402,7 +466,10 @@
       <div class="controls-grid">
         <div class="control-group">
           <label for="wmImageLoader">Select Image</label>
-          <input type="file" id="wmImageLoader" accept="image/*">
+          <div class="drop-zone" id="dropWm" onclick="document.getElementById('wmImageLoader').click()">
+            Drag & Drop or Click Image
+            <input type="file" id="wmImageLoader" accept="image/*" style="display:none">
+          </div>
         </div>
         <div class="control-group">
           <label for="wmText">Watermark Text</label>
@@ -470,6 +537,77 @@
     </div>
   </div>
 
+  <!-- TAB 3: RESIZER, CROP & ADJUSTMENTS -->
+  <div id="tabResizer" class="tab-content">
+    <div class="top-row">
+      <div>
+        <h1>Image Resizer, Crop & Adjustments</h1>
+        <p class="sub">Resize, crop, adjust visual parameters and convert formats.</p>
+      </div>
+      <button id="downloadResizedBtn" class="btn-action" disabled onclick="downloadResizedImage()">
+        ⬇ Download Processed Image
+      </button>
+    </div>
+
+    <div class="panel-box">
+      <h2>1. Image & Dimensions</h2>
+      <div class="controls-grid">
+        <div class="control-group">
+          <label>Select Image</label>
+          <div class="drop-zone" id="dropResize" onclick="document.getElementById('resizeImageLoader').click()">
+            Drag & Drop or Click Image
+            <input type="file" id="resizeImageLoader" accept="image/*" style="display:none">
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Width (px)</label>
+          <input type="number" id="resizeWidth" placeholder="Width">
+        </div>
+        <div class="control-group">
+          <label>Height (px)</label>
+          <input type="number" id="resizeHeight" placeholder="Height">
+        </div>
+        <div class="control-group">
+          <label>Export Format</label>
+          <select id="exportFormat">
+            <option value="image/png">PNG</option>
+            <option value="image/jpeg">JPEG</option>
+            <option value="image/webp">WebP</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-box">
+      <h2>2. Visual Adjustments</h2>
+      <div class="controls-grid">
+        <div class="control-group">
+          <label>Brightness (<span id="brightnessVal">100</span>%)</label>
+          <input type="range" id="adjBrightness" min="0" max="200" value="100">
+        </div>
+        <div class="control-group">
+          <label>Contrast (<span id="contrastVal">100</span>%)</label>
+          <input type="range" id="adjContrast" min="0" max="200" value="100">
+        </div>
+        <div class="control-group">
+          <label>Saturation (<span id="saturateVal">100</span>%)</label>
+          <input type="range" id="adjSaturate" min="0" max="200" value="100">
+        </div>
+        <div class="control-group">
+          <label>Blur (<span id="blurVal">0</span>px)</label>
+          <input type="range" id="adjBlur" min="0" max="20" value="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-stage">
+      <div id="resizePlaceholder" class="placeholder-text">
+        <p>Upload an image above to start editing</p>
+      </div>
+      <canvas id="resizeCanvas"></canvas>
+    </div>
+  </div>
+
   <footer>
     dase/grid — Visual testing tool. Built with native styling.
   </footer>
@@ -498,9 +636,11 @@ let state = {
 function switchTab(tabName) {
   document.getElementById('navMockups').classList.toggle('active', tabName === 'mockups');
   document.getElementById('navWatermark').classList.toggle('active', tabName === 'watermark');
+  document.getElementById('navResizer').classList.toggle('active', tabName === 'resizer');
   
   document.getElementById('tabMockups').classList.toggle('active', tabName === 'mockups');
   document.getElementById('tabWatermark').classList.toggle('active', tabName === 'watermark');
+  document.getElementById('tabResizer').classList.toggle('active', tabName === 'resizer');
 }
 
 function setTheme(mode) {
@@ -552,9 +692,37 @@ function updateStorageVisualizer() {
   document.getElementById('storageBar').style.width = `${Math.max(percentage, 2)}%`;
 }
 
+/* Setup Drag and Drop */
+function setupDragAndDrop(dropId, inputId, callback) {
+  const zone = document.getElementById(dropId);
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    zone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
+  });
+  ['dragenter', 'dragover'].forEach(eventName => {
+    zone.addEventListener(eventName, () => zone.classList.add('dragover'), false);
+  });
+  ['dragleave', 'drop'].forEach(eventName => {
+    zone.addEventListener(eventName, () => zone.classList.remove('dragover'), false);
+  });
+  zone.addEventListener('drop', e => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if (files.length > 0) {
+      const input = document.getElementById(inputId);
+      input.files = files;
+      callback({ target: input }, inputId.includes('Banner') ? 'banner' : 'avatar');
+    }
+  });
+}
+
+setupDragAndDrop('dropBanner', 'uploadBanner', handleImageUpload);
+setupDragAndDrop('dropAvatar', 'uploadAvatar', handleImageUpload);
+setupDragAndDrop('dropWm', 'wmImageLoader', handleWatermarkImage);
+setupDragAndDrop('dropResize', 'resizeImageLoader', handleResizeImage);
+
 /* Image Upload Handling for Mockups */
 function handleImageUpload(e, type) {
-  const file = e.target.files[0];
+  const file = e.target ? e.target.files[0] : e;
   if (!file) return;
 
   const reader = new FileReader();
@@ -564,6 +732,7 @@ function handleImageUpload(e, type) {
       if (type === 'banner') {
         state.bannerImg = dataUrl;
         localStorage.setItem('dase_banner', dataUrl);
+        extractColorPalette(dataUrl);
       } else {
         state.avatarImg = dataUrl;
         localStorage.setItem('dase_avatar', dataUrl);
@@ -576,6 +745,50 @@ function handleImageUpload(e, type) {
     }
   };
   reader.readAsDataURL(file);
+}
+
+/* Color Palette Extractor */
+function extractColorPalette(imgSrc) {
+  const img = new Image();
+  img.crossOrigin = 'Anonymous';
+  img.onload = function() {
+    const cvs = document.createElement('canvas');
+    const ctx = cvs.getContext('2d');
+    cvs.width = 50; cvs.height = 50;
+    ctx.drawImage(img, 0, 0, 50, 50);
+    const data = ctx.getImageData(0, 0, 50, 50).data;
+    
+    let colors = [];
+    for (let i = 0; i < data.length; i += 20) {
+      const r = data[i], g = data[i+1], b = data[i+2];
+      const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+      if (!colors.includes(hex)) colors.push(hex);
+      if (colors.length >= 6) break;
+    }
+
+    const container = document.getElementById('bannerPalette');
+    container.innerHTML = '';
+    colors.forEach(color => {
+      const swatch = document.createElement('div');
+      swatch.className = 'color-swatch';
+      swatch.style.backgroundColor = color;
+      swatch.innerText = color;
+      swatch.title = `Click to copy ${color}`;
+      swatch.onclick = () => navigator.clipboard.writeText(color);
+      container.appendChild(swatch);
+    });
+  };
+  img.src = imgSrc;
+}
+
+/* Safe Zone Guide */
+function toggleSafeZone() {
+  const val = document.getElementById('safeZoneSelect').value;
+  const banner = document.querySelector('.mockup-banner');
+  if (banner) {
+    if (val === 'on') banner.classList.add('show-safe-zone');
+    else banner.classList.remove('show-safe-zone');
+  }
 }
 
 /* Visual Filters */
@@ -618,8 +831,9 @@ function renderMockup() {
   if (badge === 'status_dnd') badgeHtml = `<div class="discord-status status-dnd"></div>`;
 
   container.innerHTML = `
-    <div class="mockup-banner" style="aspect-ratio: ${aspectRatio}; ${bannerStyle}">
+    <div class="mockup-banner ${document.getElementById('safeZoneSelect')?.value === 'on' ? 'show-safe-zone' : ''}" style="aspect-ratio: ${aspectRatio}; ${bannerStyle}">
       ${!state.bannerImg ? 'Upload a Banner Image' : ''}
+      <div class="safe-zone-overlay"></div>
     </div>
     <div style="padding: 16px; display: flex; align-items: center; gap: 16px;">
       <div class="mockup-avatar-wrapper">
@@ -643,6 +857,8 @@ function renderMockup() {
       el.style.backgroundImage = state.avatarImg ? `url('${state.avatarImg}')` : 'none';
     }
   });
+
+  if (state.bannerImg) extractColorPalette(state.bannerImg);
 }
 
 /* PDF Export */
@@ -689,6 +905,7 @@ wmSize.addEventListener('input', () => sizeVal.textContent = wmSize.value);
 wmOpacity.addEventListener('input', () => opacityVal.textContent = wmOpacity.value);
 
 function handleWatermarkImage(e) {
+  const file = e.target ? e.target.files[0] : e;
   const reader = new FileReader();
   reader.onload = function(event) {
     wmImg = new Image();
@@ -703,8 +920,8 @@ function handleWatermarkImage(e) {
     }
     wmImg.src = event.target.result;
   }
-  if (e.target.files[0]) {
-    reader.readAsDataURL(e.target.files[0]);
+  if (file) {
+    reader.readAsDataURL(file);
   }
 }
 
@@ -806,6 +1023,77 @@ function downloadWatermarkImage() {
   const link = document.createElement('a');
   link.download = 'watermark-image.png';
   link.href = wmCanvas.toDataURL('image/png');
+  link.click();
+}
+
+/* ===== RESIZER & ADJUSTMENTS ENGINE ===== */
+const resizeImageLoader = document.getElementById('resizeImageLoader');
+const resizeCanvas = document.getElementById('resizeCanvas');
+const resizeCtx = resizeCanvas.getContext('2d');
+const resizePlaceholder = document.getElementById('resizePlaceholder');
+const downloadResizedBtn = document.getElementById('downloadResizedBtn');
+
+const resizeWidth = document.getElementById('resizeWidth');
+const resizeHeight = document.getElementById('resizeHeight');
+const adjBrightness = document.getElementById('adjBrightness');
+const adjContrast = document.getElementById('adjContrast');
+const adjSaturate = document.getElementById('adjSaturate');
+const adjBlur = document.getElementById('adjBlur');
+
+let resizeImg = new Image();
+let resizeImgLoaded = false;
+
+resizeImageLoader.addEventListener('change', handleResizeImage);
+
+[resizeWidth, resizeHeight, adjBrightness, adjContrast, adjSaturate, adjBlur].forEach(el => {
+  el.addEventListener('input', updateResizeCanvas);
+});
+
+function handleResizeImage(e) {
+  const file = e.target ? e.target.files[0] : e;
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    resizeImg = new Image();
+    resizeImg.onload = function() {
+      resizeWidth.value = resizeImg.width;
+      resizeHeight.value = resizeImg.height;
+      resizeImgLoaded = true;
+      resizePlaceholder.style.display = 'none';
+      resizeCanvas.style.display = 'block';
+      downloadResizedBtn.disabled = false;
+      updateResizeCanvas();
+    };
+    resizeImg.src = event.target.result;
+  };
+  if (file) reader.readAsDataURL(file);
+}
+
+function updateResizeCanvas() {
+  if (!resizeImgLoaded) return;
+
+  const w = parseInt(resizeWidth.value) || resizeImg.width;
+  const h = parseInt(resizeHeight.value) || resizeImg.height;
+
+  resizeCanvas.width = w;
+  resizeCanvas.height = h;
+
+  document.getElementById('brightnessVal').innerText = adjBrightness.value;
+  document.getElementById('contrastVal').innerText = adjContrast.value;
+  document.getElementById('saturateVal').innerText = adjSaturate.value;
+  document.getElementById('blurVal').innerText = adjBlur.value;
+
+  resizeCtx.filter = `brightness(${adjBrightness.value}%) contrast(${adjContrast.value}%) saturate(${adjSaturate.value}%) blur(${adjBlur.value}px)`;
+  resizeCtx.clearRect(0, 0, w, h);
+  resizeCtx.drawImage(resizeImg, 0, 0, w, h);
+}
+
+function downloadResizedImage() {
+  if (!resizeImgLoaded) return;
+  const format = document.getElementById('exportFormat').value;
+  const ext = format.split('/')[1];
+  const link = document.createElement('a');
+  link.download = `edited-image.${ext}`;
+  link.href = resizeCanvas.toDataURL(format);
   link.click();
 }
 
